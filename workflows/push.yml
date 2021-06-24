@@ -1,0 +1,61 @@
+name: Docker build and push
+on:   
+  push:
+    branches:
+      - master
+
+    schedule:
+      - cron: "0 2 * * 0"
+
+
+env:
+  IMAGE_NAME: nodejs
+
+jobs:
+  push:
+    runs-on: ubuntu-latest
+    permissions:
+      packages: write
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: hadolint/hadolint-action@v1.5.0
+        with:
+          dockerfile: Dockerfile
+          config: hadolint-ci.yaml
+
+      - name: Build image
+        run: docker-compose -f docker-compose.yml build
+
+      - name: Log into registry
+        # This is where you will update the PAT to GITHUB_TOKEN
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+      - name: Push image
+        run: docker-compose -f docker-compose.yml push
+
+      - name: Tag this version
+        run: docker tag ghcr.io/katarti/nginx:latest ghcr.io/katarti/nginx:${{ github.run_number }}
+
+      - name: Push the versioned image
+        run: docker push ghcr.io/katarti/nginx:${{ github.run_number }}
+
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ success() }}
+        env:
+          SLACK_WEBHOOK: ${{ secrets.BUILD_NOTIFY_SLACK }}
+          SLACK_COLOR: green
+          SLACK_MESSAGE: 'Good luck, this time... :rocket:'
+          SLACK_TITLE: Build successful
+      
+      - name: Slack Notification
+        uses: rtCamp/action-slack-notify@v2
+        if: ${{ failure() }}
+        env:
+          SLACK_WEBHOOK: ${{ secrets.BUILD_NOTIFY_SLACK }}
+          SLACK_COLOR: red
+          SLACK_MESSAGE: 'Seems whatever you did failed :unrocket:'
+          SLACK_TITLE: Build failed
