@@ -10,7 +10,9 @@ RUN microdnf update -y && \
 ONBUILD RUN chown -R nginx:nginx /var/log/nginx \
     && chmod -R g+w /var/cache/nginx \
     && chown -R nginx:nginx /etc/nginx \
-    && chmod -R g+w /etc/nginx
+    && chmod -R g+w /etc/nginx \
+    && chown -R nginx:nginx /var/log/nginx \
+    && chmod -R g+w /var/log/nginx
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
