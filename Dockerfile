@@ -5,7 +5,8 @@ SHELL ["/bin/bash", "-l", "-c"]
 RUN microdnf update -y && \
   microdnf -y install \
   nginx && \
-  microdnf clean all
+  microdnf clean all && \
+  rm -f /etc/nginx/nginx.conf.default
 
 COPY nginx.conf /etc/nginx/nginx.conf
 
