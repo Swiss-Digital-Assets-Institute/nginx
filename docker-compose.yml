@@ -4,4 +4,4 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: ghcr.io/katarti/nginx:latest
+    image: acornsaustralia/nginx:latest
