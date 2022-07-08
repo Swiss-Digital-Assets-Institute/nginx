@@ -3,5 +3,4 @@ services:
   nginx-unprivileged:
     build:
       context: .
-      dockerfile: Dockerfile
-    image: acornsaustralia/nginx:latest
+    image: nginx-unprivileged:latest
