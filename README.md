@@ -7,7 +7,7 @@ This repository provides Dockerfiles for Fedora based images with nginx.
 To build a react based client side rendered single page application, use the following Dockerfile.
 
 ```Dockerfile
-FROM acornsaustralia/node:14 as dev
+FROM ghcr.io/swiss-digital-assets-institute/node:14 as dev
 
 ARG UID=1000
 ENV UID=${UID}
@@ -27,7 +27,7 @@ COPY --chown=node:node . /app/
 
 RUN npm run build
 
-FROM acornsaustralia/nginx:latest as prod
+FROM ghcr.io/swiss-digital-assets-institute/nginx:latest as prod
 
 COPY --from=dev --chown=nginx:nginx /app/build/ /usr/share/nginx/html
 ```
